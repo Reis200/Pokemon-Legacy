@@ -25,16 +25,16 @@ class Player1:
 
     self.pos = "on_the_left"
 
+    self.power_up = "None"
 
-
-    
 
   def display_health(self):
-    health_bar_max = pygame.Rect(self.rect.left,20,self.health_max,20)
-    health_bar = pygame.Rect(self.rect.left,20,self.health,20)
+    health_bar_max = pygame.Rect(self.rect.left, 20, self.health_max, 20)
+    health_bar = pygame.Rect(self.rect.left, 20, self.health, 20)
 
     health_text = game_font.render(f"Health: {self.health}", False, (0, 0, 0))
-    health_text_rect = health_text.get_rect(center=(health_bar_max.centerx,health_bar_max.centery + 20))
+    health_text_rect = health_text.get_rect(center=(health_bar_max.centerx, health_bar_max.centery + 20))
+
 
     if self.health / self.health_max >= 0.75:
       pygame.draw.rect(self.screen,(139,172,15),health_bar)
@@ -47,6 +47,12 @@ class Player1:
     pygame.draw.rect(self.screen,"#000000",health_bar_max,4)
 
     self.screen.blit(health_text,health_text_rect)
+
+  def display_stats(self):
+    self.state_text = game_font.render(f"PowerUp:{self.power_up}",False,(0,0,0))
+    self.state_text_rect = self.state_text.get_rect(center = (self.rect.centerx, 70))
+
+    self.screen.blit(self.state_text,self.state_text_rect)
 
   def move(self):
     keys = pygame.key.get_pressed()
@@ -103,11 +109,18 @@ class Player1:
         active_attack.update()
 
   def check_collision(self,opponent):
+    # attack collide with opponent
     for attack in self.active_attacks:
       if attack.rect.colliderect(opponent.rect) and opponent.health > 0:
         opponent.health -= 5
         self.active_attacks.remove(attack)
 
+      # attack collide with another
+      for enemy_attack in opponent.active_attacks:
+        if attack.rect.colliderect(enemy_attack.rect):
+          opponent.active_attacks.remove(enemy_attack)
+          self.active_attacks.remove(attack)
+    # player collide with another
     if self.rect.colliderect(opponent.rect):
       if self.rect.midbottom[1] + 20 < opponent.rect.midbottom[1] and opponent.health > 0:
         opponent.health -= 10
@@ -124,6 +137,7 @@ class Player1:
   def update(self,opponent):
     self.move()
     self.display_health()
+    self.display_stats()
     self.display_player()
     self.attack_movement()
     self.check_collision(opponent)
