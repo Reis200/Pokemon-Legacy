@@ -1,9 +1,9 @@
 import pygame
 from database import title_font, game_font
-
+from random import randint
 
 class Player1:
-  def __init__(self,selected_pokemon,relative_pos):
+  def __init__(self,selected_pokemon,health,speed,damage,relative_pos):
     self.image = pygame.transform.rotozoom(pygame.image.load(f"assets/{selected_pokemon}").convert_alpha(),0,0.5)
     self.rect = self.image.get_rect(midbottom=relative_pos)
 
@@ -11,6 +11,7 @@ class Player1:
 
     self.screen = pygame.display.get_surface()
 
+    self.speed = 5
     self.previous_jump_time = 0
     self.jumping_speed = 0.75
     self.falling_speed = 0.3
@@ -19,6 +20,8 @@ class Player1:
     self.health_max = 100
     self.health = 100
 
+    self.damage = 5
+
     self.previous_attack_time = 0
 
     self.active_attacks = []
@@ -26,7 +29,33 @@ class Player1:
     self.pos = "on_the_left"
 
     self.power_up = "None"
+    self.power_up_time = 0
 
+
+  def activate_power_up_state(self):
+    if self.power_up != "None":
+      if self.power_up == "speed":
+        self.speed *= 1.75
+        self.power_up_time = pygame.time.get_ticks()
+      elif self.power_up == "power":
+        self.damage *= 2
+        self.power_up_time = pygame.time.get_ticks()
+      elif self.power_up == "ultimate":
+        self.speed *= 1.75
+        self.damage *= 2
+        self.power_up_time = pygame.time.get_ticks()
+
+      print(self.speed,self.damage)
+
+
+  def refresh_power_up_state(self):
+    if pygame.time.get_ticks() - self.power_up_time > 10000:
+      self.speed = 5
+      self.damage = 5
+      self.power_up = "None"
+
+  def display_healing_loading(self):
+    pass
 
   def display_health(self):
     health_bar_max = pygame.Rect(self.rect.left, 20, self.health_max, 20)
@@ -59,13 +88,13 @@ class Player1:
 
     # left and right
     if keys[pygame.K_RIGHT]:
-      self.rect.x += 5
+      self.rect.x += self.speed
 
     if keys[pygame.K_LEFT]:
-      self.rect.x -= 5
+      self.rect.x -= self.speed
 
     # jump
-    if keys[pygame.K_UP] and (pygame.time.get_ticks() - self.previous_jump_time >= 1000) and self.rect.bottom >= 350:
+    if keys[pygame.K_UP] and (pygame.time.get_ticks() - self.previous_jump_time >= 500) and self.rect.bottom >= 350:
       self.previous_jump_time = pygame.time.get_ticks()
       self.on_jump_state = True
 
@@ -74,7 +103,7 @@ class Player1:
     else: self.on_jump_state = False
 
     if not self.on_jump_state and self.rect.bottom < 350:
-      self.rect.y += 6
+      self.rect.y += 15
     
     
     if self.rect.right >= self.screen.get_width():
@@ -92,7 +121,7 @@ class Player1:
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_attack_time >= 1000:
+    if keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_attack_time >= 5000:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
       self.previous_attack_time = pygame.time.get_ticks()
@@ -112,7 +141,7 @@ class Player1:
     # attack collide with opponent
     for attack in self.active_attacks:
       if attack.rect.colliderect(opponent.rect) and opponent.health > 0:
-        opponent.health -= 5
+        opponent.health -= self.damage
         self.active_attacks.remove(attack)
 
       # attack collide with another
@@ -123,7 +152,7 @@ class Player1:
     # player collide with another
     if self.rect.colliderect(opponent.rect):
       if self.rect.midbottom[1] + 20 < opponent.rect.midbottom[1] and opponent.health > 0:
-        opponent.health -= 10
+        opponent.health -= self.damage * 2
         self.rect.midbottom = (self.origin_location[0],self.origin_location[1] - 200)
       else:
         self.rect.midbottom = (self.origin_location[0], self.origin_location[1])
@@ -141,11 +170,12 @@ class Player1:
     self.display_player()
     self.attack_movement()
     self.check_collision(opponent)
+    self.refresh_power_up_state()
 
 
 class Player2(Player1):
-  def __init__(self,selected_pokemon,relative_pos):
-    super().__init__(selected_pokemon,relative_pos)
+  def __init__(self,selected_pokemon,health,speed,damage,relative_pos):
+    super().__init__(selected_pokemon,health,speed,damage,relative_pos)
     self.pos = "on_the_right"
 
 
@@ -154,13 +184,13 @@ class Player2(Player1):
 
     # left and right
     if keys[pygame.K_d]:
-      self.rect.x += 5
+      self.rect.x += self.speed
 
     if keys[pygame.K_a]:
-      self.rect.x -= 5
+      self.rect.x -= self.speed
 
     # jump
-    if keys[pygame.K_w] and (pygame.time.get_ticks() - self.previous_jump_time >= 1000) and self.rect.bottom >= 350:
+    if keys[pygame.K_w] and (pygame.time.get_ticks() - self.previous_jump_time >= 500) and self.rect.bottom >= 350:
       self.previous_jump_time = pygame.time.get_ticks()
       self.on_jump_state = True
 
@@ -170,7 +200,7 @@ class Player2(Player1):
       self.on_jump_state = False
 
     if not self.on_jump_state and self.rect.bottom < 350:
-      self.rect.y += 6
+      self.rect.y += 15
 
 
     if self.rect.right >= self.screen.get_width():
@@ -186,7 +216,7 @@ class Player2(Player1):
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_x] and pygame.time.get_ticks() - self.previous_attack_time >= 1000:
+    if keys[pygame.K_x] and pygame.time.get_ticks() - self.previous_attack_time >= 5000:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
       self.previous_attack_time = pygame.time.get_ticks()
