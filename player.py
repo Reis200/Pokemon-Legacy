@@ -7,7 +7,7 @@ class Player1:
     self.image = pygame.transform.rotozoom(pygame.image.load(f"assets/{selected_pokemon}").convert_alpha(),0,0.5)
     self.rect = self.image.get_rect(midbottom=relative_pos)
 
-    self.origin_location = relative_pos
+    self.origin_location = self.rect.center
 
     self.screen = pygame.display.get_surface()
 
@@ -16,6 +16,12 @@ class Player1:
     self.jumping_speed = 0.75
     self.falling_speed = 0.3
     self.on_jump_state = False
+
+    self.previous_heal_time = 0
+    self.heal_time_loading = 0
+    self.heal_bar_time_length = 100
+    self.max_heal_delay_time = 5000
+    self.delay_ratio = self.max_heal_delay_time / self.heal_bar_time_length
 
     self.health_max = 100
     self.health = 100
@@ -55,7 +61,24 @@ class Player1:
       self.power_up = "None"
 
   def display_healing_loading(self):
-    pass
+    if self.heal_time_loading <= self.max_heal_delay_time:
+      self.heal_time_loading = pygame.time.get_ticks() - self.previous_heal_time
+
+    heal_loading_max = pygame.Rect(self.rect.left,90,self.heal_bar_time_length,25)
+    heal_loading = pygame.Rect(self.rect.left,90,int(self.heal_time_loading / self.delay_ratio),20)
+
+    heal_text = game_font.render(f"Heal:", False, (0, 0, 0))
+    heal_text_rect = heal_text.get_rect(center=(heal_loading_max.centerx, heal_loading_max.centery))
+
+    if self.heal_time_loading >= self.max_heal_delay_time:
+      pygame.draw.rect(self.screen, (19,156,107), heal_loading)
+      pygame.draw.rect(self.screen, "#000000", heal_loading_max, 5)
+    else:
+      pygame.draw.rect(self.screen, (252, 214, 9), heal_loading)
+      pygame.draw.rect(self.screen, "#000000", heal_loading_max, 5)
+
+    self.screen.blit(heal_text,heal_text_rect)
+
 
   def display_health(self):
     health_bar_max = pygame.Rect(self.rect.left, 20, self.health_max, 20)
@@ -121,10 +144,11 @@ class Player1:
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_attack_time >= 5000:
+    if keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_heal_time >= 5000:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
-      self.previous_attack_time = pygame.time.get_ticks()
+      self.previous_heal_time = pygame.time.get_ticks()
+      self.heal_time_loading = 0
     # if keys[pygame.K_3] and pygame.time.get_ticks() - self.previous_attack_time >= 200:
     #   self.previous_attack_time = pygame.time.get_ticks()
 
@@ -166,6 +190,7 @@ class Player1:
   def update(self,opponent):
     self.move()
     self.display_health()
+    self.display_healing_loading()
     self.display_stats()
     self.display_player()
     self.attack_movement()
@@ -216,10 +241,11 @@ class Player2(Player1):
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_x] and pygame.time.get_ticks() - self.previous_attack_time >= 5000:
+    if keys[pygame.K_x] and pygame.time.get_ticks() - self.previous_heal_time >= 5000:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
-      self.previous_attack_time = pygame.time.get_ticks()
+      self.previous_heal_time = pygame.time.get_ticks()
+      self.heal_time_loading = 0
     # if keys[pygame.K_x] and pygame.time.get_ticks() - self.previous_attack_time >= 200:
     #   self.previous_attack_time = pygame.time.get_ticks()
     # if keys[pygame.K_c] and pygame.time.get_ticks() - self.previous_attack_time >= 200:

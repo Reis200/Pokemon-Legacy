@@ -12,7 +12,7 @@ class Game:
     self.screen = pygame.display.set_mode((800, 400))
 
     pygame.display.set_caption('Pokemon Legacy')
-    icon = pygame.image.load("pikachu.png").convert_alpha()
+    icon = pygame.image.load("power_up/ultimate.png").convert_alpha()
     pygame.display.set_icon(icon)
 
     self.clock = pygame.time.Clock()
