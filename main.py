@@ -65,7 +65,7 @@ class Game:
       self.power_up_sprite_group.update(self.game_state_manager.game_sprites)
 
       if self.game_state_manager.game_over: self.reset()
-      
+
       pygame.display.update()
       self.clock.tick(60)
 

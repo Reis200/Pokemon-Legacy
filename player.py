@@ -61,7 +61,7 @@ class Player1:
       self.power_up = "None"
 
   def display_healing_loading(self):
-    if self.heal_time_loading <= self.max_heal_delay_time:
+    if self.heal_time_loading < self.max_heal_delay_time:
       self.heal_time_loading = pygame.time.get_ticks() - self.previous_heal_time
 
     heal_loading_max = pygame.Rect(self.rect.left,90,self.heal_bar_time_length,25)
@@ -140,11 +140,11 @@ class Player1:
     keys = pygame.key.get_pressed()
 
     #attacks 1,2,3
-    if keys[pygame.K_1] and pygame.time.get_ticks() - self.previous_attack_time >= 400:
+    if keys[pygame.K_KP1] and pygame.time.get_ticks() - self.previous_attack_time >= 400:
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_heal_time >= 5000:
+    if keys[pygame.K_KP2] and pygame.time.get_ticks() - self.previous_heal_time >= 5000:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
       self.previous_heal_time = pygame.time.get_ticks()

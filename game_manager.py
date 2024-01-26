@@ -1,6 +1,6 @@
 import pygame
 from random import choice
-from database import title_font, game_font
+from database import title_font, game_font, character_set_player1, character_set_player2
 
 
 class GameStateManager:
@@ -61,8 +61,8 @@ class StartMenu:
     #other properties
 
     bg_list = [
-        'background/ocean.jpg', 'background/sunrise.jpg',
-        'background/LateEvening.png'
+        'background/start_menu_bg1.gif', 'background/start_menu_bg2.png',
+        'background/start_menu_bg3.png'
     ]
     self.background = pygame.image.load(choice(bg_list)).convert()
     self.background_rect = self.background.get_rect(topleft=(0, 0))
@@ -206,7 +206,6 @@ class StartMenu:
 
 
 class CharacterMenu:
-
   def __init__(self):
 
     # menu state
@@ -214,30 +213,74 @@ class CharacterMenu:
 
     bg_list = [
         'background/ocean.jpg', 'background/sunrise.jpg',
-        'background/LateEvening.png'
+        'background/LateEvening.png', "background/sunny.jpg"
     ]
     self.background = pygame.image.load(choice(bg_list)).convert()
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
     self.screen = pygame.display.get_surface()
 
-    # character images frames
+    self.initilise_character_selection_player1()
+    self.initilise_character_selection_player2()
 
-  def display(self):
+  def initilise_character_selection_player1(self):
+    self.game_characters1 = {}
+    for key, item in character_set_player1.items():
+      image = item["image"].convert_alpha()
+      rect = image.get_rect(center = item["display_pos"])
+      self.game_characters1[image] = rect
+
+  def initilise_character_selection_player2(self):
+    self.game_characters2 = {}
+    for key, item in character_set_player2.items():
+      image = item["image"].convert_alpha()
+      rect = image.get_rect(center = item["display_pos"])
+      self.game_characters2[image] = rect
+
+  def display_characters(self):
+    for image, rect in self.game_characters1.items():
+      self.screen.blit(image,rect)
+    for image, rect in self.game_characters2.items():
+      self.screen.blit(image,rect)
+
+
+
+
+  def display_background(self):
     self.screen.blit(self.background, self.background_rect)
 
   def check_collision(self):
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_x]:
+    if keys[pygame.K_g]:
       self.menu_active = False
 
   def update(self):
     self.check_collision()
-    self.display()
+    self.display_background()
+
+    self.display_characters()
 
 
-class GameState(CharacterMenu):
+
+
+class GameState:
+  def __init__(self):
+
+    # menu state
+    self.menu_active = False
+
+    bg_list = [
+      'background/ocean.jpg', 'background/sunrise.jpg',
+      'background/LateEvening.png', "background/sunny.jpg"
+    ]
+    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background_rect = self.background.get_rect(topleft=(0, 0))
+
+    self.screen = pygame.display.get_surface()
+
+  def display_background(self):
+    self.screen.blit(self.background, self.background_rect)
 
   def update(self):
-    self.display()
+    self.display_background()
