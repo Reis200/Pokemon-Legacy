@@ -17,7 +17,7 @@ class Player1:
     self.falling_speed = 0.3
     self.on_jump_state = False
 
-    self.previous_heal_time = 0
+    self.previous_heal_time = pygame.time.get_ticks()
     self.heal_time_loading = 0
     self.heal_bar_time_length = 100
     self.max_heal_delay_time = 5000
@@ -61,8 +61,12 @@ class Player1:
       self.power_up = "None"
 
   def display_healing_loading(self):
-    if self.heal_time_loading < self.max_heal_delay_time:
+    if pygame.time.get_ticks() - self.previous_heal_time > self.max_heal_delay_time and self.heal_time_loading == 0:
+      self.previous_heal_time = pygame.time.get_ticks()
+    elif self.heal_time_loading <= self.max_heal_delay_time:
       self.heal_time_loading = pygame.time.get_ticks() - self.previous_heal_time
+
+
 
     heal_loading_max = pygame.Rect(self.rect.left,90,self.heal_bar_time_length,25)
     heal_loading = pygame.Rect(self.rect.left,90,int(self.heal_time_loading / self.delay_ratio),20)
