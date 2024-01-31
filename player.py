@@ -7,7 +7,7 @@ class Player1:
     self.image = player_assets["image"].convert_alpha()
     self.rect = self.image.get_rect(midbottom=player_1_rect_pos)
 
-    self.origin_location = self.rect.center
+    self.origin_location = self.rect.midbottom
 
     self.screen = pygame.display.get_surface()
 
@@ -166,6 +166,9 @@ class Player1:
         self.on_jump_state = False
         self.velocity = self.jump_height
 
+    if not self.on_jump_state and self.rect.bottom < 360:
+      self.rect.bottom += self.velocity
+
 
 
     if self.rect.right >= self.screen.get_width():
@@ -205,16 +208,18 @@ class Player1:
         opponent.health -= self.damage
         self.active_attacks.remove(attack)
 
-      # attack collide with another
+    # attack collide with another
+    for attack in self.active_attacks:
       for enemy_attack in opponent.active_attacks:
-        if attack.rect.colliderect(enemy_attack.rect):
+        if attack.rect.colliderect(enemy_attack.rect) and enemy_attack != None and attack != None:
           opponent.active_attacks.remove(enemy_attack)
           self.active_attacks.remove(attack)
+
     # player collide with another
     if self.rect.colliderect(opponent.rect):
       if self.rect.midbottom[1] + 20 < opponent.rect.midbottom[1] and opponent.health > 0:
         opponent.health -= self.damage * 2
-        self.rect.midbottom = (self.origin_location[0],self.origin_location[1] - 200)
+        self.rect.midbottom = (self.origin_location[0]-200,self.origin_location[1])
       else:
         self.rect.midbottom = (self.origin_location[0], self.origin_location[1])
 
@@ -264,6 +269,8 @@ class Player2(Player1):
         self.on_jump_state = False
         self.velocity = self.jump_height
 
+    if not self.on_jump_state and self.rect.bottom < 360:
+      self.rect.bottom += self.velocity
 
 
     if self.rect.right >= self.screen.get_width():

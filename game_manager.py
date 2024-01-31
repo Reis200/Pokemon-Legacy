@@ -1,7 +1,7 @@
 import pygame
 from player import Player1,Player2
 from random import choice
-from database import title_font, game_font, character_set_player1, character_set_player2
+from database import title_font, game_font, menu_font, character_set_player1, character_set_player2
 
 
 class GameStateManager:
@@ -24,6 +24,7 @@ class GameStateManager:
         self.start_menu.update()
         if not self.start_menu.menu_active:
           self.character_menu.menu_active = True
+          pygame.time.wait(500)
 
       if self.character_menu.menu_active:
         self.character_menu.update()
@@ -229,6 +230,12 @@ class CharacterMenu:
     self.background = pygame.image.load(choice(bg_list)).convert()
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
+    self.player1_text = menu_font.render("Player1:",False,(0,0,0))
+    self.player1_text_rect = self.player1_text.get_rect(center = (480,50))
+
+    self.player2_text = menu_font.render("Player2:", False, (0, 0, 0))
+    self.player2_text_rect = self.player2_text.get_rect(center=(320, 50))
+
     self.screen = pygame.display.get_surface()
 
     self.initilise_character_selection_player1()
@@ -264,8 +271,10 @@ class CharacterMenu:
 
 
 
-  def display_background(self):
+  def display_menu(self):
     self.screen.blit(self.background, self.background_rect)
+    self.screen.blit(self.player1_text,self.player1_text_rect)
+    self.screen.blit(self.player2_text,self.player2_text_rect)
 
   def check_collision(self):
     keys = pygame.key.get_pressed()
@@ -298,7 +307,7 @@ class CharacterMenu:
       self.menu_active = False
 
   def update(self):
-    self.display_background()
+    self.display_menu()
     self.display_characters()
     self.check_collision()
     self.check_end_menu()

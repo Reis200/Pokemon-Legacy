@@ -14,7 +14,7 @@ character_set_player1 = {
   "Eevee": {"display_pos":(750,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee.png"),0,0.5),"attack":"animations/?","health": 90,"speed":7,"damage":4},
   "Gastly": {"display_pos":(600,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly.png"),0,0.5),"attack":"animations/?","health": 80,"speed":6,"damage":6},
   "Pidgey": {"display_pos":(750,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey.png"),0,0.5),"attack":"animations/electric","health": 80,"speed":6,"damage":4},
-  "Snorlax": {"display_pos":(480,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
+  "Snorlax": {"display_pos":(480,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
 }
 # at the left side looking right
 character_set_player2 = {
@@ -26,11 +26,12 @@ character_set_player2 = {
   "Eevee2": {"display_pos":(200,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee2.png"),0,0.5),"attack":"animations/?","health": 90,"speed":7,"damage":4},
   "Gastly2": {"display_pos":(50,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly2.png"),0,0.5),"attack":"animations/?","health": 80,"speed":6,"damage":6},
   "Pidgey2": {"display_pos":(200,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey2.png"),0,0.5),"attack":"animations/electric","health": 80,"speed":6,"damage":5},
-  "Snorlax2": {"display_pos":(320,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax2.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
+  "Snorlax2": {"display_pos":(320,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax2.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
 }
 
 title_font = pygame.font.Font("fonts/8-bit-hud.ttf", 40)
 game_font = pygame.font.Font("fonts/8-bit-hud.ttf",10)
+menu_font = pygame.font.Font("fonts/8-bit-hud.ttf",15)
 
 player_1_rect_pos = (700,360)
 player_2_rect_pos = (100,360)
