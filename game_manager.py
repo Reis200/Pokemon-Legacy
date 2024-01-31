@@ -1,25 +1,21 @@
 import pygame
+from player import Player1,Player2
 from random import choice
 from database import title_font, game_font, character_set_player1, character_set_player2
 
 
 class GameStateManager:
 
-  def __init__(self, game_sprites=[]):
-
-    self.game_sprites = game_sprites
+  def __init__(self):
 
     self.start_menu = StartMenu()
     self.character_menu = CharacterMenu()
     self.game_state = GameState()
+    self.game_end = GameEnd()
 
     self.game_over = False
 
   def format_game(self):
-    self.start_menu = StartMenu()
-    self.character_menu = CharacterMenu()
-    self.game_state = GameState()
-
     self.game_over = True
 
   def update(self,power_up_sprite_group):
@@ -34,19 +30,35 @@ class GameStateManager:
         if not self.character_menu.menu_active:
           self.game_state.menu_active = True
 
+          player1_assets, player2_assets = self.character_menu.return_player_assets()
+
+          # players
+          self.player1 = Player1(player1_assets)
+          self.player2 = Player2(player2_assets)
+
       if self.game_state.menu_active:
         self.game_state.update()
-        self.game_sprites[0].update(self.game_sprites[1])
-        self.game_sprites[1].update(self.game_sprites[0])
 
-        for sprite in power_up_sprite_group.sprites():
-          if sprite.rect.colliderect(self.game_sprites[0].rect):
-            # self.game_sprites[0].power_up
-            pass
+        # [0] player 1
+        self.player1.update(self.player2)
+        self.player2.update(self.player1)
 
-        for object in self.game_sprites:
-          if object.health <= 0:
-            self.format_game()
+        if self.player1.check_death():
+          self.game_end.menu_active = True
+          self.winner = "player2"
+          self.winner_image = self.player2.image
+        if self.player2.check_death():
+          self.game_end.menu_active = True
+          self.winner = "player1"
+          self.winner_image = self.player1.image
+
+      if self.game_end.menu_active:
+        self.game_end.update(self.winner,self.winner_image)
+        if not self.game_end.menu_active:
+          self.format_game()
+        
+          
+        
 
 
 class StartMenu:
@@ -61,8 +73,7 @@ class StartMenu:
     #other properties
 
     bg_list = [
-        'background/start_menu_bg1.gif', 'background/start_menu_bg2.png',
-        'background/start_menu_bg3.png'
+        'background/start_menu_bg1.gif', 'background/start_menu_bg2.png'
     ]
     self.background = pygame.image.load(choice(bg_list)).convert()
     self.background_rect = self.background.get_rect(topleft=(0, 0))
@@ -223,6 +234,13 @@ class CharacterMenu:
     self.initilise_character_selection_player1()
     self.initilise_character_selection_player2()
 
+    self.player_1_character_names = [name for name in character_set_player1.keys()]
+    self.player_2_character_names = [name for name in character_set_player2.keys()]
+
+    self.player_1_assets = None;
+    self.player_2_assets = None;
+
+
   def initilise_character_selection_player1(self):
     self.game_characters1 = {}
     for key, item in character_set_player1.items():
@@ -251,17 +269,39 @@ class CharacterMenu:
 
   def check_collision(self):
     keys = pygame.key.get_pressed()
-
     if keys[pygame.K_g]:
       self.menu_active = False
 
+    if pygame.mouse.get_pressed()[0] and self.player_1_assets == None:
+      for image, rect in self.game_characters1.items():
+        if rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+          self.find_pokemon_properties_player1(rect.center)
+    if pygame.mouse.get_pressed()[0] and self.player_2_assets == None:
+      for image, rect in self.game_characters2.items():
+        if rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+          self.find_pokemon_properties_player2(rect.center)
+
+  def find_pokemon_properties_player1(self,rect_pos):
+    for name in self.player_1_character_names:
+      if rect_pos == character_set_player1[name]["display_pos"]:
+        self.player_1_assets = character_set_player1[name]
+  def find_pokemon_properties_player2(self,rect_pos):
+    for name in self.player_2_character_names:
+      if rect_pos == character_set_player2[name]["display_pos"]:
+        self.player_2_assets = character_set_player2[name]
+
+  def return_player_assets(self):
+    return self.player_1_assets, self.player_2_assets
+
+  def check_end_menu(self):
+    if self.player_1_assets != None and self.player_2_assets != None:
+      self.menu_active = False
+
   def update(self):
-    self.check_collision()
     self.display_background()
-
     self.display_characters()
-
-
+    self.check_collision()
+    self.check_end_menu()
 
 
 class GameState:
@@ -284,3 +324,45 @@ class GameState:
 
   def update(self):
     self.display_background()
+
+
+class GameEnd:
+  def __init__(self):
+
+    self.menu_active = False
+
+    bg_list = [
+      'background/start_menu_bg1.gif', 'background/start_menu_bg2.png',
+      'background/start_menu_bg3.png'
+    ]
+    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background_rect = self.background.get_rect(topleft=(0, 0))
+
+    self.screen = pygame.display.get_surface()
+
+    self.go_back_button = pygame.transform.rotozoom(pygame.image.load("buttons/exit_button.png").convert_alpha(), 0, 2)
+    self.go_back_button_rect = self.go_back_button.get_rect(center=(750, 350))
+
+  def display_background(self):
+    self.screen.blit(self.background,self.background_rect)
+    self.screen.blit(self.go_back_button,self.go_back_button_rect)
+
+  def display_winner(self,winner,winner_image):
+    self.winner_text = title_font.render(f"Winner:{winner}",False,(0,0,0))
+    self.winner_rect = self.winner_text.get_rect(center = (400,200))
+
+    winner_image = winner_image
+    winner_rect = winner_image.get_rect(center = (400,300))
+
+    self.screen.blit(self.winner_text,self.winner_rect)
+    self.screen.blit(winner_image,winner_rect)
+
+
+  def check_menu_active(self):
+    if pygame.mouse.get_pressed()[0] and self.go_back_button_rect.collidepoint(pygame.mouse.get_pos()):
+      self.menu_active = False
+
+  def update(self,winner,winner_image):
+    self.display_background()
+    self.display_winner(winner,winner_image)
+    self.check_menu_active()
