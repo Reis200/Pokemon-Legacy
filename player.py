@@ -167,7 +167,9 @@ class Player1:
         self.velocity = self.jump_height
 
     if not self.on_jump_state and self.rect.bottom < 360:
-      self.rect.bottom += self.velocity
+      self.rect.bottom += 360 - self.rect.bottom
+    elif not self.on_jump_state and self.rect.bottom > 360:
+      self.rect.bottom = 360
 
 
 
@@ -219,9 +221,9 @@ class Player1:
     if self.rect.colliderect(opponent.rect):
       if self.rect.midbottom[1] + 20 < opponent.rect.midbottom[1] and opponent.health > 0:
         opponent.health -= self.damage * 2
-        self.rect.midbottom = (self.origin_location[0]-200,self.origin_location[1])
+        self.rect.midbottom = self.origin_location
       else:
-        self.rect.midbottom = (self.origin_location[0], self.origin_location[1])
+        self.rect.midbottom = self.origin_location
 
 
 
@@ -261,7 +263,7 @@ class Player2(Player1):
     if keys[pygame.K_w]:
       self.on_jump_state = True
 
-    # jump
+    # improved jump
     if self.on_jump_state:
       self.rect.y -= self.velocity
       self.velocity -= self.gravity
@@ -270,7 +272,9 @@ class Player2(Player1):
         self.velocity = self.jump_height
 
     if not self.on_jump_state and self.rect.bottom < 360:
-      self.rect.bottom += self.velocity
+      self.rect.bottom += 360 - self.rect.bottom
+    elif not self.on_jump_state and self.rect.bottom > 360:
+      self.rect.bottom = 360
 
 
     if self.rect.right >= self.screen.get_width():
