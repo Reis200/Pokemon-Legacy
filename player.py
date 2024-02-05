@@ -1,6 +1,7 @@
 import pygame
 from database import title_font, game_font,player_1_rect_pos,player_2_rect_pos
 from random import randint
+from os import listdir
 
 class Player1:
   def __init__(self,player_assets):
@@ -184,11 +185,11 @@ class Player1:
     keys = pygame.key.get_pressed()
 
     #attacks 1,2,3
-    if keys[pygame.K_KP1] or keys[pygame.K_1] and pygame.time.get_ticks() - self.previous_attack_time >= 400:
+    if (keys[pygame.K_KP1] or keys[pygame.K_1]) and pygame.time.get_ticks() - self.previous_attack_time >= 400:
       attack = PlayerAttack(self)
       self.active_attacks.append(attack)
       self.previous_attack_time = pygame.time.get_ticks()
-    if keys[pygame.K_KP2] or keys[pygame.K_2] and pygame.time.get_ticks() - self.previous_heal_time >= 5000 and self.health != self.health_max:
+    if (keys[pygame.K_KP2] or keys[pygame.K_2]) and pygame.time.get_ticks() - self.previous_heal_time >= 5000 and self.health != self.health_max:
       if self.health < self.health_max: self.health += 20
       if self.health > self.health_max: self.health = self.health_max
       self.previous_heal_time = pygame.time.get_ticks()
@@ -225,7 +226,9 @@ class Player1:
       else:
         self.rect.midbottom = self.origin_location
 
-
+  def delete_unrendered_attacks(self):
+    for attack in self.active_attacks:
+      if attack.check_above_border(): self.active_attacks.remove(attack)
 
   def display_player(self):
     self.screen.blit(self.image,self.rect)
@@ -239,6 +242,7 @@ class Player1:
     self.display_player()
     self.attack_movement()
     self.check_collision(opponent)
+    self.delete_unrendered_attacks()
     self.refresh_power_up_state()
 
 
@@ -315,40 +319,32 @@ class PlayerAttack:
 
     # attack
 
+    file_directory = self.player.player_assets["attack"]
+    animation_files = listdir(file_directory)
 
     self.attack_speed = 5
 
     if self.player.pos == "on_the_right":
-      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(),0,2),
-                              pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_1.png").convert_alpha(),0,2),
-                              pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(),0,2),
-                              pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(),0,2),
-                              pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(),0,2)]
+      # self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(),0,2),
+      #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_1.png").convert_alpha(),0,2),
+      #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(),0,2),
+      #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(),0,2),
+      #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(),0,2)]
+      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(),0,2) for file in animation_files]
     else:
-      self.attack1_sprites = [
-        pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(), 180, 2),
-        pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_1.png").convert_alpha(), 180, 2),
-        pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(), 180, 2),
-        pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(), 180, 2),
-        pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(), 180, 2)]
+      # self.attack1_sprites = [
+      #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(), 180, 2),
+      #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_1.png").convert_alpha(), 180, 2),
+      #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(), 180, 2),
+      #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(), 180, 2),
+      #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(), 180, 2)]
+      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(), 180, 2) for file in animation_files]
 
     self.animation_index = 0
     self.animation_speed = 0.1
 
     self.image = self.attack1_sprites[self.animation_index]
     self.rect = self.image.get_rect(center=self.player.rect.center)
-
-    # self.attack2_sprites = [pygame.image.load("animations/fire/frame_0.png").convert_alpha(),
-    #                        pygame.image.load("animations/fire/frame_1.png").convert_alpha(),
-    #                        pygame.image.load("animations/fire/frame_2.png").convert_alpha(),
-    #                        pygame.image.load("animations/fire/frame_3.png").convert_alpha(),
-    #                        pygame.image.load("animations/fire/frame_4.png").convert_alpha()]
-    #
-    # self.attack3_sprites = [pygame.image.load("animations/electric/frame_0.png").convert_alpha(),
-    #                        pygame.image.load("animations/electric/frame_1.png").convert_alpha(),
-    #                        pygame.image.load("animations/electric/frame_2.png").convert_alpha(),
-    #                        pygame.image.load("animations/electric/frame_3.png").convert_alpha(),
-    #                        pygame.image.load("animations/electric/frame_4.png").convert_alpha()]
 
 
   def attack_animation(self):
@@ -357,7 +353,6 @@ class PlayerAttack:
       self.animation_index = 0
 
     self.image = self.attack1_sprites[int(self.animation_index)]
-    #self.rect = self.image.get_rect(center=self.player.rect.center)
 
 
   def display_attack(self):
@@ -369,7 +364,17 @@ class PlayerAttack:
     if self.player.pos == "on_the_left":
       self.rect.x -= self.attack_speed
 
-    # if self.rect.left >= self.screen.get_width() or self.rect.right <= 0:
+  def check_above_border(self):
+    if self.rect.right >= self.screen.get_width() + 50:
+      return True
+    elif self.rect.left <= -80:
+      return True
+
+    if self.rect.top <= -80:
+      return True
+    elif self.rect.bottom >= self.screen.get_height() + 80:
+      return True
+
 
   def update(self):
     self.display_attack()
