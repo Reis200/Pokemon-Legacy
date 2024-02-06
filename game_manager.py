@@ -3,6 +3,32 @@ from player import Player1,Player2
 from random import choice
 from database import title_font, game_font, menu_font, character_set_player1, character_set_player2
 
+pygame.mixer.init()
+
+class MusicManager:
+  def __init__(self):
+    self.title_music = pygame.mixer.Sound("music/xDeviruchi - Title Theme .wav")
+    self.game_music1 = pygame.mixer.Sound("music/xDeviruchi - And The Journey Begins .wav")
+    self.game_music2 = pygame.mixer.Sound("music/xDeviruchi - Decisive Battle.wav")
+    self.game_music3 = pygame.mixer.Sound("music/xDeviruchi - Prepare for Battle! .wav")
+
+    self.music_dict = {"title":self.title_music,"game1":self.game_music1,"game2":self.game_music2,"game3":self.game_music3}
+
+    self.current_music = ""
+
+  def set_music(self,music_name):
+    self.current_music = music_name
+
+  def randomize_play_game_music(self):
+    self.play_music(choice(["game1","game2","game3"]))
+
+  def play_music(self,music_name):
+    if music_name == self.current_music:
+      self.music_dict[music_name].play(loops = -1)
+    else:
+      pygame.mixer.stop()
+      self.set_music(music_name)
+      self.music_dict[music_name].play(loops = -1)
 
 class GameStateManager:
 
@@ -13,7 +39,11 @@ class GameStateManager:
     self.game_state = GameState()
     self.game_end = GameEnd()
 
+    self.music_manager = MusicManager()
+    self.music_manager.play_music("title")
+
     self.game_over = False
+
 
   def format_game(self):
     self.game_over = True
@@ -30,6 +60,7 @@ class GameStateManager:
         self.character_menu.update()
         if not self.character_menu.menu_active:
           self.game_state.menu_active = True
+          self.music_manager.randomize_play_game_music()
 
           player1_assets, player2_assets = self.character_menu.return_player_assets()
 
@@ -52,6 +83,9 @@ class GameStateManager:
           self.game_end.menu_active = True
           self.winner = "player1"
           self.winner_image = self.player1.image
+
+        if self.game_end.menu_active:
+          self.music_manager.play_music("title")
 
       if self.game_end.menu_active:
         self.game_end.update(self.winner,self.winner_image)
@@ -110,31 +144,35 @@ class StartMenu:
 
     self.credit_text1 = game_font.render(
       'A pokemon game made after a request...', False, (255, 255, 255))
-    self.credit_text1_rect = self.credit_text1.get_rect(center=(400, 100))
+    self.credit_text1_rect = self.credit_text1.get_rect(center=(400, 80))
 
     self.credit_text2 = game_font.render(
       'two programming bros combined to build', False, (255, 255, 255))
-    self.credit_text2_rect = self.credit_text2.get_rect(center=(400, 140))
+    self.credit_text2_rect = self.credit_text2.get_rect(center=(400, 120))
 
     self.credit_text3 = game_font.render(
       'where blood, sweat, tears and hours of work', False, (255, 255, 255))
-    self.credit_text3_rect = self.credit_text3.get_rect(center=(400, 180))
+    self.credit_text3_rect = self.credit_text3.get_rect(center=(400, 160))
 
     self.credit_text4 = game_font.render(
       'for you to enjoy the nostalgic pixel gameplay', False, (255, 255, 255))
-    self.credit_text4_rect = self.credit_text4.get_rect(center=(400, 220))
+    self.credit_text4_rect = self.credit_text4.get_rect(center=(400, 200))
 
     self.credit_text5 = game_font.render(
       'Made by:', False, (255, 255, 255))
-    self.credit_text5_rect = self.credit_text5.get_rect(center=(400, 260))
+    self.credit_text5_rect = self.credit_text5.get_rect(center=(400, 240))
 
     self.credit_text6 = game_font.render(
       'Programming Legend aka Vivek Ajesh...', False, (255, 255, 255))
-    self.credit_text6_rect = self.credit_text6.get_rect(center=(400, 300))
+    self.credit_text6_rect = self.credit_text6.get_rect(center=(400, 280))
 
     self.credit_text7 = game_font.render(
       'Reis200 aka Behlul Zengin', False, (255, 255, 255))
-    self.credit_text7_rect = self.credit_text7.get_rect(center=(400, 330))
+    self.credit_text7_rect = self.credit_text7.get_rect(center=(400, 310))
+
+    self.credit_text8 = game_font.render(
+      'music by Marllon Silva (a.k.a) xDeviruchi', False, (255, 255, 255))
+    self.credit_text8_rect = self.credit_text8.get_rect(center=(400, 340))
 
 
     #about section
@@ -197,6 +235,7 @@ class StartMenu:
       self.screen.blit(self.credit_text5, self.credit_text5_rect)
       self.screen.blit(self.credit_text6, self.credit_text6_rect)
       self.screen.blit(self.credit_text7, self.credit_text7_rect)
+      self.screen.blit(self.credit_text8,self.credit_text8_rect)
       self.screen.blit(self.go_back_button, self.go_back_button_rect)
 
 
