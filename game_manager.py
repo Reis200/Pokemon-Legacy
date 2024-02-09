@@ -3,7 +3,6 @@ from player import Player1,Player2
 from random import choice
 from database import title_font, game_font, menu_font, character_set_player1, character_set_player2
 
-pygame.mixer.init()
 
 class MusicManager:
   def __init__(self):
@@ -76,16 +75,16 @@ class GameStateManager:
         self.player2.update(self.player1)
 
         if self.player1.check_death():
-          self.game_end.menu_active = True
+          self.game_end.menu_active = True; self.game_state.menu_active = False
           self.winner = "player2"
           self.winner_image = self.player2.image
         if self.player2.check_death():
-          self.game_end.menu_active = True
+          self.game_end.menu_active = True; self.game_state.menu_active = False
           self.winner = "player1"
           self.winner_image = self.player1.image
 
-        if self.game_end.menu_active:
-          self.music_manager.play_music("title")
+        if self.game_end.menu_active and (not self.game_state.menu_active):
+          self.music_manager.randomize_play_game_music()
 
       if self.game_end.menu_active:
         self.game_end.update(self.winner,self.winner_image)
