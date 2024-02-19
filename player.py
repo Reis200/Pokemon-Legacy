@@ -11,18 +11,19 @@ class Player1:
     self.origin_location = self.rect.midbottom
 
     self.screen = pygame.display.get_surface()
+    self.screen_w, self.screen_h = self.screen.get_width(), self.screen.get_height()
 
     self.speed = player_assets["speed"]
 
     # jump mechanic
     self.on_jump_state = False
     self.gravity = 1
-    self.jump_height = 22
+    self.jump_height = 30
     self.velocity = self.jump_height
 
     self.previous_heal_time = pygame.time.get_ticks()
     self.heal_time_loading = 0
-    self.heal_bar_time_length = 100
+    self.heal_bar_time_length = 400
     self.max_heal_delay_time = 5000
     self.delay_ratio = self.max_heal_delay_time / self.heal_bar_time_length
 
@@ -39,6 +40,8 @@ class Player1:
 
     self.power_up = "None"
     self.power_up_time = 0
+
+    self.ui_pos_centerx = self.screen.get_width() * 0.875
 
     self.player_assets = player_assets
 
@@ -75,8 +78,8 @@ class Player1:
 
 
 
-    heal_loading_max = pygame.Rect(self.rect.left,90,self.heal_bar_time_length,25)
-    heal_loading = pygame.Rect(self.rect.left,90,int(self.heal_time_loading / self.delay_ratio),20)
+    heal_loading_max = pygame.Rect(self.ui_pos_centerx,150,self.heal_bar_time_length,50); heal_loading_max.center = (self.ui_pos_centerx,120)
+    heal_loading = pygame.Rect(self.ui_pos_centerx,150,int(self.heal_time_loading / self.delay_ratio),50); heal_loading.midleft = (heal_loading_max.left,120)
 
     heal_text = game_font.render(f"Heal:", False, (0, 0, 0))
     heal_text_rect = heal_text.get_rect(center=(heal_loading_max.centerx, heal_loading_max.centery))
@@ -92,11 +95,11 @@ class Player1:
 
 
   def display_health(self):
-    health_bar_max = pygame.Rect(self.rect.left -20, 20, self.health_max, 20)
-    health_bar = pygame.Rect(self.rect.left -20, 20, self.health, 20)
+    health_bar_max = pygame.Rect(self.rect.left -20, 20, self.health_max * 3, 50); health_bar_max.center = (self.ui_pos_centerx,50)
+    health_bar = pygame.Rect(self.rect.left -20, 20, self.health * 3, 50); health_bar.midleft = (health_bar_max.left,50)
 
     health_text = game_font.render(f"Health: {self.health}", False, (0, 0, 0))
-    health_text_rect = health_text.get_rect(center=(health_bar_max.centerx, health_bar_max.centery + 20))
+    health_text_rect = health_text.get_rect(center=(health_bar_max.centerx, health_bar_max.centery))
 
 
     if self.health / self.health_max >= 0.75:
@@ -113,7 +116,7 @@ class Player1:
 
   def display_stats(self):
     self.state_text = game_font.render(f"PowerUp:{self.power_up}",False,(0,0,0))
-    self.state_text_rect = self.state_text.get_rect(topleft = (self.rect.left - 20,60))
+    self.state_text_rect = self.state_text.get_rect(center = (self.ui_pos_centerx,170))
 
     self.screen.blit(self.state_text,self.state_text_rect)
 
@@ -167,10 +170,10 @@ class Player1:
         self.on_jump_state = False
         self.velocity = self.jump_height
 
-    if not self.on_jump_state and self.rect.bottom < 360:
-      self.rect.bottom += 360 - self.rect.bottom
-    elif not self.on_jump_state and self.rect.bottom > 360:
-      self.rect.bottom = 360
+    if not self.on_jump_state and self.rect.bottom < self.screen_h * 0.9:
+      self.rect.bottom += self.screen_h * 0.9 - self.rect.bottom
+    elif not self.on_jump_state and self.rect.bottom > self.screen_h * 0.9:
+      self.rect.bottom = self.screen_h * 0.9
 
 
 
@@ -252,6 +255,7 @@ class Player2(Player1):
     self.rect = self.image.get_rect(midbottom=player_2_rect_pos)
     self.origin_location = self.rect.center
     self.pos = "on_the_right"
+    self.ui_pos_centerx = self.screen.get_width() * 0.125
 
 
   def move(self):
@@ -275,10 +279,10 @@ class Player2(Player1):
         self.on_jump_state = False
         self.velocity = self.jump_height
 
-    if not self.on_jump_state and self.rect.bottom < 360:
-      self.rect.bottom += 360 - self.rect.bottom
-    elif not self.on_jump_state and self.rect.bottom > 360:
-      self.rect.bottom = 360
+    if not self.on_jump_state and self.rect.bottom < self.screen_h * 0.9:
+      self.rect.bottom += self.screen_h * 0.9 - self.rect.bottom
+    elif not self.on_jump_state and self.rect.bottom > self.screen_h * 0.9:
+      self.rect.bottom = self.screen_h * 0.9
 
 
     if self.rect.right >= self.screen.get_width():
@@ -322,7 +326,7 @@ class PlayerAttack:
     file_directory = self.player.player_assets["attack"]
     animation_files = listdir(file_directory)
 
-    self.attack_speed = 5
+    self.attack_speed = 10
 
     if self.player.pos == "on_the_right":
       # self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(),0,2),
@@ -330,7 +334,7 @@ class PlayerAttack:
       #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(),0,2),
       #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(),0,2),
       #                         pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(),0,2)]
-      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(),0,2) for file in animation_files]
+      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(),0,4) for file in animation_files]
     else:
       # self.attack1_sprites = [
       #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_0.png").convert_alpha(), 180, 2),
@@ -338,7 +342,7 @@ class PlayerAttack:
       #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_2.png").convert_alpha(), 180, 2),
       #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_3.png").convert_alpha(), 180, 2),
       #   pygame.transform.rotozoom(pygame.image.load("animations/fire/frame_4.png").convert_alpha(), 180, 2)]
-      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(), 180, 2) for file in animation_files]
+      self.attack1_sprites = [pygame.transform.rotozoom(pygame.image.load(f"{file_directory}/{file}").convert_alpha(), 180, 4) for file in animation_files]
 
     self.animation_index = 0
     self.animation_speed = 0.1

@@ -5,36 +5,43 @@ pygame.font.init()
 #electric fire grass water
 # ? we have to find another
 # at the right side looking left
+
+pygame.init()
+
+info = pygame.display.Info() #called before set_mode
+screen_w,screen_h = info.current_w, info.current_h
+
+
 character_set_player1 = {
-  "Pikachu": {"display_pos":(600,50),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pikachu.png"),0,0.5),"attack":"animations/electric","health":100,"speed":8,"damage":5},
-  "Charmander": {"display_pos":(750,50),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charmander.png"),0,0.5),"attack":"animations/fire","health":100,"speed":6,"damage":5},
-  "Squirtle": {"display_pos":(600,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Squirtle.png"),0,0.5),"attack":"animations/water","health":120,"speed":3,"damage":8},
-  "Bulbasaur": {"display_pos":(750,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Bulbasaur.png"),0,0.5),"attack":"animations/grass","health": 150,"speed":2,"damage":10},
-  "Charizard": {"display_pos":(600,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charizard.png"),0,0.5),"attack":"animations/fire","health": 120,"speed":6,"damage":7},
-  "Eevee": {"display_pos":(750,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee.png"),0,0.5),"attack":"animations/fire","health": 90,"speed":7,"damage":4},
-  "Gastly": {"display_pos":(600,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly.png"),0,0.5),"attack":"animations/water","health": 80,"speed":6,"damage":6},
-  "Pidgey": {"display_pos":(750,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey.png"),0,0.5),"attack":"animations/electric","health": 80,"speed":6,"damage":4},
-  "Snorlax": {"display_pos":(480,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
+  "Pikachu": {"display_pos":(screen_w * 0.60,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pikachu.png"),0,1),"attack":"animations/electric","health":100,"speed":12,"damage":5},
+  "Charmander": {"display_pos":(screen_w * 0.75,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charmander.png"),0,1),"attack":"animations/fire","health":100,"speed":9,"damage":5},
+  "Squirtle": {"display_pos":(screen_w * 0.90,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Squirtle.png"),0,1),"attack":"animations/water","health":120,"speed":4.5,"damage":8},
+  "Bulbasaur": {"display_pos":(screen_w * 0.60,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Bulbasaur.png"),0,1),"attack":"animations/grass","health": 150,"speed":3,"damage":10},
+  "Charizard": {"display_pos":(screen_w * 0.75,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charizard.png"),0,1),"attack":"animations/fire","health": 120,"speed":9,"damage":7},
+  "Eevee": {"display_pos":(screen_w * 0.90,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee.png"),0,1),"attack":"animations/fire","health": 90,"speed":10.5,"damage":4},
+  "Gastly": {"display_pos":(screen_w * 0.60,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly.png"),0,1),"attack":"animations/water","health": 80,"speed":9,"damage":6},
+  "Pidgey": {"display_pos":(screen_w * 0.75,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey.png"),0,1),"attack":"animations/electric","health": 80,"speed":9,"damage":4},
+  "Snorlax": {"display_pos":(screen_w * 0.90,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax.png"),0,1),"attack":"animations/water","health": 130,"speed":4.5,"damage":9}
 }
 # at the left side looking right
 character_set_player2 = {
-  "Pikachu2": {"display_pos":(50,50),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pikachu2.png"),0,0.5),"attack":"animations/electric","health":100,"speed":8,"damage":5},
-  "Charmander2": {"display_pos":(200,50),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charmander2.png"),0,0.5),"attack":"animations/fire","health":100,"speed":6,"damage":5},
-  "Squirtle2": {"display_pos":(50,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Squirtle2.png"),0,0.5),"attack":"animations/water","health":120,"speed":3,"damage":8},
-  "Bulbasaur2": {"display_pos":(200,150),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Bulbasaur2.png"),0,0.5),"attack":"animations/grass","health": 150,"speed":2,"damage":10},
-  "Charizard2": {"display_pos":(50,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charizard2.png"),0,0.5),"attack":"animations/fire","health": 120,"speed":6,"damage":7},
-  "Eevee2": {"display_pos":(200,250),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee2.png"),0,0.5),"attack":"animations/fire","health": 90,"speed":7,"damage":4},
-  "Gastly2": {"display_pos":(50,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly2.png"),0,0.5),"attack":"animations/water","health": 80,"speed":6,"damage":6},
-  "Pidgey2": {"display_pos":(200,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey2.png"),0,0.5),"attack":"animations/electric","health": 80,"speed":6,"damage":5},
-  "Snorlax2": {"display_pos":(320,350),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax2.png"),0,0.5),"attack":"animations/water","health": 130,"speed":3,"damage":9}
+  "Pikachu2": {"display_pos":(screen_w * 0.40,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pikachu2.png"),0,1),"attack":"animations/electric","health":100,"speed":12,"damage":5},
+  "Charmander2": {"display_pos":(screen_w * 0.25,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charmander2.png"),0,1),"attack":"animations/fire","health":100,"speed":9,"damage":5},
+  "Squirtle2": {"display_pos":(screen_w * 0.10,screen_h * 0.2),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Squirtle2.png"),0,1),"attack":"animations/water","health":120,"speed":4.5,"damage":8},
+  "Bulbasaur2": {"display_pos":(screen_w * 0.40,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Bulbasaur2.png"),0,1),"attack":"animations/grass","health": 150,"speed":3,"damage":10},
+  "Charizard2": {"display_pos":(screen_w * 0.25,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Charizard2.png"),0,1),"attack":"animations/fire","health": 120,"speed":9,"damage":7},
+  "Eevee2": {"display_pos":(screen_w * 0.10,screen_h * 0.4),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Eevee2.png"),0,1),"attack":"animations/fire","health": 90,"speed":10.5,"damage":4},
+  "Gastly2": {"display_pos":(screen_w * 0.40,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Gastly2.png"),0,1),"attack":"animations/water","health": 80,"speed":9,"damage":6},
+  "Pidgey2": {"display_pos":(screen_w * 0.25,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Pidgey2.png"),0,1),"attack":"animations/electric","health": 80,"speed":9,"damage":5},
+  "Snorlax2": {"display_pos":(screen_w * 0.10,screen_h * 0.6),"image":pygame.transform.rotozoom(pygame.image.load(f"assets/Snorlax2.png"),0,1),"attack":"animations/water","health": 130,"speed":4.5,"damage":9}
 }
 
-title_font = pygame.font.Font("fonts/8-bit-hud.ttf", 40)
-game_font = pygame.font.Font("fonts/8-bit-hud.ttf",10)
-menu_font = pygame.font.Font("fonts/8-bit-hud.ttf",15)
+title_font = pygame.font.Font("fonts/8-bit-hud.ttf", 80)
+game_font = pygame.font.Font("fonts/8-bit-hud.ttf",20)
+menu_font = pygame.font.Font("fonts/8-bit-hud.ttf",30)
 
-player_1_rect_pos = (700,360)
-player_2_rect_pos = (100,360)
+player_1_rect_pos = (screen_w * 0.875,screen_h * 0.9)
+player_2_rect_pos = (screen_w * 0.125,screen_h * 0.9)
 
 
 

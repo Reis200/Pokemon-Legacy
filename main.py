@@ -1,5 +1,5 @@
 import pygame
-from pygame.constants import FULLSCREEN
+from database import screen_w,screen_h
 from game_manager import GameStateManager
 from game_sprites import PowerUp
 from sys import exit
@@ -8,7 +8,7 @@ pygame.init()
 
 class Game:
   def __init__(self):
-    self.screen = pygame.display.set_mode((800, 400), pygame.RESIZABLE)
+    self.screen = pygame.display.set_mode((screen_w, screen_h - 50), pygame.RESIZABLE) # offset added to see window bars
 
     pygame.display.set_caption('Pokemon Legacy')
     icon = pygame.image.load("power_up/ultimate.png").convert_alpha()
@@ -45,8 +45,6 @@ class Game:
         if event.type == pygame.QUIT:
           pygame.quit()
           exit()
-        if event.type == pygame.VIDEORESIZE:
-          self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
         if event.type == self.power_up_event and self.game_state_manager.game_state.menu_active:
             self.power_up_sprite_group.add(PowerUp())
 

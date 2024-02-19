@@ -78,10 +78,12 @@ class GameStateManager:
           self.game_end.menu_active = True; self.game_state.menu_active = False
           self.winner = "player2"
           self.winner_image = self.player2.image
+          pygame.mixer.stop()
         if self.player2.check_death():
           self.game_end.menu_active = True; self.game_state.menu_active = False
           self.winner = "player1"
           self.winner_image = self.player1.image
+          pygame.mixer.stop()
 
         if self.game_end.menu_active and (not self.game_state.menu_active):
           self.music_manager.randomize_play_game_music()
@@ -109,103 +111,100 @@ class StartMenu:
     bg_list = [
         'background/start_menu_bg1.gif', 'background/start_menu_bg2.png'
     ]
-    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background =  pygame.transform.scale(pygame.image.load(choice(bg_list)).convert(),(pygame.display.get_window_size()))
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
     self.screen = pygame.display.get_surface()
 
     self.title = title_font.render("Pokemon Legacy", False, (0, 0, 0))
-    self.title_rect = self.title.get_rect(center=(400, 100))
+    self.title_rect = self.title.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 5))
 
     self.play_button = pygame.transform.rotozoom(
-        pygame.image.load("buttons/play_button.png").convert_alpha(), 0, 2)
-    self.play_button_rect = self.play_button.get_rect(center=(400, 170))
+        pygame.image.load("buttons/play_button.png").convert_alpha(), 0, 4)
+    self.play_button_rect = self.play_button.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() * 0.4))
 
     self.about_button = pygame.transform.rotozoom(
-        pygame.image.load("buttons/about_button.png").convert_alpha(), 0, 2.5)
-    self.about_button_rect = self.about_button.get_rect(center=(400, 330))
+        pygame.image.load("buttons/about_button.png").convert_alpha(), 0, 4)
+    self.about_button_rect = self.about_button.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() * 0.55))
 
-    self.description_button = pygame.transform.rotozoom(
-        pygame.image.load(
-            "buttons/empty_description_area.png").convert_alpha(), 0, 4)
-    self.description_button_rect = self.description_button.get_rect(
-        center=(400, 200))
+    self.description_button = pygame.transform.rotozoom(pygame.image.load("buttons/empty_description_area.png").convert_alpha(), 0, 8)
+    self.description_button_rect = self.description_button.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2))
 
     # credits
 
     self.in_credits_section = False
 
-    self.credits_button = pygame.transform.rotozoom(pygame.image.load("buttons/credits_button.png").convert_alpha(),0,2)
-    self.credits_button_rect = self.credits_button.get_rect(center = (400,250))
+    self.credits_button = pygame.transform.rotozoom(pygame.image.load("buttons/credits_button.png").convert_alpha(),0,4)
+    self.credits_button_rect = self.credits_button.get_rect(center = (self.screen.get_width() // 2,self.screen.get_height() * 0.7))
 
-    self.credit_description = pygame.transform.rotozoom(pygame.image.load("buttons/empty_description_area.png").convert_alpha(), 0, 4)
-    self.credit_description_rect = self.credit_description.get_rect(center=(400, 200))
+    self.credit_description = pygame.transform.rotozoom(pygame.image.load("buttons/empty_description_area.png").convert_alpha(), 0, 8)
+    self.credit_description_rect = self.credit_description.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.5))
 
     self.credit_text1 = game_font.render(
       'A pokemon game made after a request...', False, (255, 255, 255))
-    self.credit_text1_rect = self.credit_text1.get_rect(center=(400, 80))
+    self.credit_text1_rect = self.credit_text1.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.35))
 
     self.credit_text2 = game_font.render(
       'two programming bros combined to build', False, (255, 255, 255))
-    self.credit_text2_rect = self.credit_text2.get_rect(center=(400, 120))
+    self.credit_text2_rect = self.credit_text2.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.39))
 
     self.credit_text3 = game_font.render(
       'where blood, sweat, tears and hours of work', False, (255, 255, 255))
-    self.credit_text3_rect = self.credit_text3.get_rect(center=(400, 160))
+    self.credit_text3_rect = self.credit_text3.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.43))
 
     self.credit_text4 = game_font.render(
       'for you to enjoy the nostalgic pixel gameplay', False, (255, 255, 255))
-    self.credit_text4_rect = self.credit_text4.get_rect(center=(400, 200))
+    self.credit_text4_rect = self.credit_text4.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.47))
 
     self.credit_text5 = game_font.render(
       'Made by:', False, (255, 255, 255))
-    self.credit_text5_rect = self.credit_text5.get_rect(center=(400, 240))
+    self.credit_text5_rect = self.credit_text5.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.51))
 
     self.credit_text6 = game_font.render(
       'Programming Legend aka Vivek Ajesh...', False, (255, 255, 255))
-    self.credit_text6_rect = self.credit_text6.get_rect(center=(400, 280))
+    self.credit_text6_rect = self.credit_text6.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.55))
 
     self.credit_text7 = game_font.render(
       'Reis200 aka Behlul Zengin', False, (255, 255, 255))
-    self.credit_text7_rect = self.credit_text7.get_rect(center=(400, 310))
+    self.credit_text7_rect = self.credit_text7.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.59))
 
     self.credit_text8 = game_font.render(
       'music by Marllon Silva (a.k.a) xDeviruchi', False, (255, 255, 255))
-    self.credit_text8_rect = self.credit_text8.get_rect(center=(400, 340))
+    self.credit_text8_rect = self.credit_text8.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.63))
 
 
     #about section
 
-    self.go_back_button = pygame.transform.rotozoom(pygame.image.load("buttons/exit_button.png").convert_alpha(),0,2)
-    self.go_back_button_rect = self.go_back_button.get_rect(center = (750,350))
+    self.go_back_button = pygame.transform.rotozoom(pygame.image.load("buttons/exit_button.png").convert_alpha(),0,4)
+    self.go_back_button_rect = self.go_back_button.get_rect(center = (self.screen.get_width() * 0.90, self.screen.get_height() * 0.90))
 
     self.about_text1 = game_font.render(
         'In Pokemon Legacy, two players engage in a', False, (255, 255, 255))
-    self.about_text1_rect = self.about_text1.get_rect(center=(400, 130))
+    self.about_text1_rect = self.about_text1.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.35))
 
     self.about_text2 = game_font.render(
         'thrilling 2d pixelated battles set in a', False, (255, 255, 255))
-    self.about_text2_rect = self.about_text2.get_rect(center=(400, 150))
+    self.about_text2_rect = self.about_text2.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.39))
 
     self.about_text3 = game_font.render(
         'nostalgic world. Trainers choose their Pokemon,', False, (255, 255, 255))
-    self.about_text3_rect = self.about_text3.get_rect(center=(400, 170))
+    self.about_text3_rect = self.about_text3.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.43))
 
     self.about_text4 = game_font.render(
         'strategise moves and compete for victory.', False, (255, 255, 255))
-    self.about_text4_rect = self.about_text4.get_rect(center=(400, 190))
+    self.about_text4_rect = self.about_text4.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.47))
 
     self.about_text5 = game_font.render(
         'As they explore the landscape, each duel is a', False, (255, 255, 255))
-    self.about_text5_rect = self.about_text5.get_rect(center=(400, 210))
+    self.about_text5_rect = self.about_text5.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.51))
 
     self.about_text6 = game_font.render(
         'test of skill and strategy, shaping the', False, (255, 255, 255))
-    self.about_text6_rect = self.about_text6.get_rect(center=(400, 230))
+    self.about_text6_rect = self.about_text6.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.55))
 
     self.about_text7 = game_font.render(
-        'legacy of their rivalry. ', False, (255, 255, 255))
-    self.about_text7_rect = self.about_text7.get_rect(center=(400, 250))
+        'legacy of their rivalry.', False, (255, 255, 255))
+    self.about_text7_rect = self.about_text7.get_rect(center=(self.screen.get_width() * 0.5, self.screen.get_height() * 0.59))
 
   def display_menu(self):
     self.screen.blit(self.background, self.background_rect)
@@ -261,20 +260,22 @@ class CharacterMenu:
     # menu state
     self.menu_active = False
 
+    self.screen = pygame.display.get_surface()
+
     bg_list = [
         'background/ocean.jpg', 'background/sunrise.jpg',
         'background/LateEvening.png', "background/sunny.jpg"
     ]
-    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background = pygame.transform.scale(pygame.image.load(choice(bg_list)).convert(),(pygame.display.get_window_size()))
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
+    self.screen
+
     self.player1_text = menu_font.render("Player1:",False,(0,0,0))
-    self.player1_text_rect = self.player1_text.get_rect(center = (480,50))
+    self.player1_text_rect = self.player1_text.get_rect(center = (self.screen.get_width() * 0.25, self.screen.get_height() * 0.10))
 
     self.player2_text = menu_font.render("Player2:", False, (0, 0, 0))
-    self.player2_text_rect = self.player2_text.get_rect(center=(320, 50))
-
-    self.screen = pygame.display.get_surface()
+    self.player2_text_rect = self.player2_text.get_rect(center=(self.screen.get_width() * 0.75, self.screen.get_height() * 0.10))
 
     self.initilise_character_selection_player1()
     self.initilise_character_selection_player2()
@@ -361,7 +362,8 @@ class GameState:
       'background/ocean.jpg', 'background/sunrise.jpg',
       'background/LateEvening.png', "background/sunny.jpg"
     ]
-    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background = pygame.transform.scale(pygame.image.load(choice(bg_list)).convert(),(pygame.display.get_window_size()))
+
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
     self.screen = pygame.display.get_surface()
@@ -380,15 +382,16 @@ class GameEnd:
 
     bg_list = [
       'background/start_menu_bg1.gif', 'background/start_menu_bg2.png',
-      'background/start_menu_bg3.png'
     ]
-    self.background = pygame.image.load(choice(bg_list)).convert()
+    self.background = pygame.transform.scale(pygame.image.load(choice(bg_list)).convert(),(pygame.display.get_window_size()))
+
     self.background_rect = self.background.get_rect(topleft=(0, 0))
 
     self.screen = pygame.display.get_surface()
 
-    self.go_back_button = pygame.transform.rotozoom(pygame.image.load("buttons/exit_button.png").convert_alpha(), 0, 2)
-    self.go_back_button_rect = self.go_back_button.get_rect(center=(750, 350))
+    self.go_back_button = pygame.transform.rotozoom(pygame.image.load("buttons/exit_button.png").convert_alpha(), 0, 4)
+    self.go_back_button_rect = self.go_back_button.get_rect(
+      center=(self.screen.get_width() * 0.90, self.screen.get_height() * 0.90))
 
   def display_background(self):
     self.screen.blit(self.background,self.background_rect)
@@ -396,10 +399,10 @@ class GameEnd:
 
   def display_winner(self,winner,winner_image):
     self.winner_text = title_font.render(f"Winner:{winner}",False,(0,0,0))
-    self.winner_rect = self.winner_text.get_rect(center = (400,200))
+    self.winner_rect = self.winner_text.get_rect(center = (self.screen.get_width() * 0.5, self.screen.get_height() * 0.25))
 
     winner_image = winner_image
-    winner_rect = winner_image.get_rect(center = (400,300))
+    winner_rect = winner_image.get_rect(center = (self.screen.get_width() * 0.5, self.screen.get_height() * 0.5))
 
     self.screen.blit(self.winner_text,self.winner_rect)
     self.screen.blit(winner_image,winner_rect)

@@ -6,20 +6,20 @@ from random import choice,randint
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.power_up_dict = {"ultimate": pygame.transform.rotozoom(pygame.image.load("power_up/ultimate.png").convert_alpha(),0,0.75),
-                              "power": pygame.transform.rotozoom(pygame.image.load("power_up/power.png").convert_alpha(),0,0.75),
-                              "speed": pygame.transform.rotozoom(pygame.image.load("power_up/speed.png").convert_alpha(),0,0.75)}
-        self.image = self.power_up_dict[choice(["ultimate","power","speed"])]
-        self.rect = self.image.get_rect(center=(randint(200, 600), randint(-300, -50)))
-        self.name = [key for key in self.power_up_dict.keys() if self.power_up_dict[key] == self.image]
-
         self.screen = pygame.display.get_surface()
+
+        self.power_up_dict = {"ultimate": pygame.transform.rotozoom(pygame.image.load("power_up/ultimate.png").convert_alpha(),0,1.85),
+                              "power": pygame.transform.rotozoom(pygame.image.load("power_up/power.png").convert_alpha(),0,1.85),
+                              "speed": pygame.transform.rotozoom(pygame.image.load("power_up/speed.png").convert_alpha(),0,1.85)}
+        self.image = self.power_up_dict[choice(["ultimate","power","speed"])]
+        self.rect = self.image.get_rect(center=(randint(self.screen.get_width() * 0.125, self.screen.get_width() * 0.875), randint(-300, -50)))
+        self.name = [key for key in self.power_up_dict.keys() if self.power_up_dict[key] == self.image]
 
 
     def fall(self):
-        if self.rect.top <= 470:
-            self.rect.y += 5
-        if self.rect.top >= 470:
+        if self.rect.top <= self.screen.get_height() + 80:
+            self.rect.y += 10
+        if self.rect.top >= self.screen.get_height() + 80:
             self.kill()
 
     def update(self,players):
